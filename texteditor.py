@@ -121,7 +121,15 @@ def about_commands():
     - 'Delete' deletes the last character
     """
 
-    mb.showinfo(title="All commands", message=commands, width=60, height=40)
+    custom_dialog = Toplevel(root)
+    custom_dialog.title("All commands")
+    custom_dialog.geometry("610x500")
+
+    label = Label(custom_dialog, text=commands, justify=LEFT)
+    label.pack(padx=10, pady=10)
+
+    button = Button(custom_dialog, text="OK", command=custom_dialog.destroy)
+    button.pack(pady=10)
 
 
 menu_bar = Menu(root)
