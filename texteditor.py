@@ -8,8 +8,8 @@ import os
 # Initializing the window to create python text editor
 root = Tk()
 root.title("Untitled - Deregtext")
-root.geometry("800x500")
-root.resizable(0, 0)
+root.geometry("1000x700")
+root.resizable(TRUE, TRUE)
 
 root.columnconfigure(0, weight=1)
 root.rowconfigure(0, weight=1)
