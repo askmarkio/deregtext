@@ -4,6 +4,10 @@ import tkinter.messagebox as mb
 from PIL import Image, ImageTk
 import os
 
+# Variables to track file path and changes
+file_path = None
+text_changed = False
+
 # Creating all the functions of all the buttons in the Deregtext
 def open_file():
     """
@@ -11,6 +15,7 @@ def open_file():
     The default extension is ".dgt"
     """
 
+    global file_path, text_changed
     file = fd.askopenfilename(
         defaultextension=".dgt",
         filetypes=[("All Files", "*.*"), ("Text File", "*.dgt")],
@@ -18,10 +23,12 @@ def open_file():
 
     if file != "":
         root.title(f"{os.path.basename(file)}")
-        text_area.delete(1.0, END)
+        text_area.delete(1.0, END) # This deletes all text in the text area
         with open(file, "r") as file_:
             text_area.insert(1.0, file_.read())
             file_.close()
+        file_path = file
+        text_changed = False
     else:
         file = None
 
@@ -31,8 +38,11 @@ def open_new_file():
     Opens a new file and deletes all content in the text area.
     """
 
+    global file_path, text_changed
     root.title("Untitled - Deregtext")
     text_area.delete(1.0, END)
+    file_path = None
+    text_changed = False
 
 def save_file():
     """
@@ -40,17 +50,42 @@ def save_file():
     Provides defaults for the user to overwrite.
     """
 
-    global text_area
-    file_path = fd.asksaveasfilename(initialfile='Untitled.dgt', defaultextension='.txt', filetypes=[("Text File", "*.txt"), ("Word Document", '*.docx'), ("PDF", "*.pdf")])
-    if file_path:
-        with open(file_path, "w") as file:
-            file.write(text_area.get(1.0, END))
-        root.title(f"{os.path.basename(file_path)} - Deregtext")
+    global file_path, text_changed
+    if file_path is None:
+        file_path = fd.asksaveasfilename(
+        initialfile="Untitled.dgt",
+        defaultextension=".dgt",
+        filetypes=[
+            ("Text File", "*.txt"),
+            ("Word Document", "*.docx"),
+            ("PDF", "*.pdf"),
+        ],
+    )
+        if not file_path:
+            return
+
+    with open(file_path, "w") as file:
+        file.write(text_area.get(1.0, END))
+    root.title(f"{os.path.basename(file_path)} - Deregtext")
+    text_changed = False
+
 
 def exit_application():
-    root.destroy()
+    if text_changed:
+        response = mb.askyesnocancel("Save changes", "Do you want to save your changes?")
+        if response: # Yes
+            save_file()
+            root.destroy()
+        elif response is None:  # Cancel
+            return
+        else:   # No
+            root.destroy()
+    else:
+        root.destroy()
 
-
+def on_text_change(event=None):
+    global text_changed
+    text_changed = True
 def copy_text():
     text_area.event_generate("<<Copy>>")
 
@@ -69,8 +104,8 @@ def select_all():
     'sel' defines the selection while '1.0' denotes the
     start point and the end point is 'end'
     """
-    text_area.tag_add('sel', '1.0', 'end')
-    return 'break'
+    text_area.tag_add("sel", "1.0", "end")
+    return "break"
 
 
 def delete_last_char():
@@ -78,7 +113,7 @@ def delete_last_char():
 
 
 def about_deregtext():
-    
+
     aboutdereg = """
     About Deregtext
     
@@ -87,7 +122,7 @@ def about_deregtext():
     Python. I have learned a bit as I've squashed bugs and 
     implemented some features. Stay tuned.
     """
-        
+
     custom_dialog1 = Toplevel(root)
     custom_dialog1.title("About Deregtext")
     custom_dialog1.geometry("610x400")
@@ -97,6 +132,7 @@ def about_deregtext():
 
     button = Button(custom_dialog1, text="OK", command=custom_dialog1.destroy)
     button.pack(pady=10)
+
 
 def about_commands():
     commands = """
@@ -208,7 +244,7 @@ def main():
     text_area.config(yscrollcommand=scroller.set)
 
     # Bind the select_all function to a keyboard shortcut (Ctrl+A)
-    root.bind('<Control-a>', select_all)
+    root.bind("<Control-a>", select_all)
 
     # Bind the right-click event to show the context menu
     text_area.bind("<Button-3>", show_context_menu)
@@ -216,12 +252,18 @@ def main():
     # Bind the left-click event to hide the context menu
     text_area.bind("<Button-1>", hide_context_menu)
 
+    # Bind text change event to track changes
+    text_area.bind('<<Modified>>', on_text_change)
+
     # Give the text area focus when the application starts
     text_area.focus_set()
 
+    # Overrie the window close button to prompt to save changes
+    root.protocol("WM_DELETE_WINDOW", exit_application)
     # Finalizing the window
     # root.update()
     root.mainloop()
+
 
 if __name__ == "__main__":
     main()
