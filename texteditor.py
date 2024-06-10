@@ -1,7 +1,6 @@
 from tkinter import *
 import tkinter.filedialog as fd
 import tkinter.messagebox as mb
-
 from PIL import Image, ImageTk
 import os
 
@@ -92,11 +91,12 @@ def paste_text():
 
 
 def select_all():
-    text_area.event_generate("<<Control-Keypress-A>>")
+    text_area.tag_add('sel', '1.0', 'end')
+    return 'break'
 
 
 def delete_last_char():
-    text_area.event_generate("<<KP_Delete")
+    text_area.event_generate("<<KP_Delete>>")
 
 
 def about_notepad():
@@ -176,6 +176,9 @@ scroller.pack(side=RIGHT, fill=Y)
 
 scroller.config(command=text_area.yview)
 text_area.config(yscrollcommand=scroller.set)
+
+# Bind the select_all function to a keyboard shortcut (Ctrl+A)
+root.bind('<Control-a>', select_all)
 
 # Finalizing the window
 # root.update()
