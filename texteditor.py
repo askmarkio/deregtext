@@ -131,7 +131,22 @@ def about_commands():
     button = Button(custom_dialog, text="OK", command=custom_dialog.destroy)
     button.pack(pady=10)
 
+# Create the context menu
+context_menu = Menu(root, tearoff=0)
+context_menu.add_command(label="Copy", command=copy_text)
+context_menu.add_command(label="Cut", command=cut_text)
+context_menu.add_command(label="Paste", command=paste_text)
+context_menu.add_separator()
+context_menu.add_command(label="Select All", command=select_all)
+context_menu.add_command(label="Delete", command=delete_last_char)
 
+def show_context_menu(event):
+    context_menu.post(event.x_root, event.y_root)
+
+def hide_context_menu(event):
+    context_menu.unpost()
+
+# Create the menu bar
 menu_bar = Menu(root)
 
 # Adding the File Menu and its components to create Python Text Editor
@@ -179,6 +194,12 @@ text_area.config(yscrollcommand=scroller.set)
 
 # Bind the select_all function to a keyboard shortcut (Ctrl+A)
 root.bind('<Control-a>', select_all)
+
+# Bind the right-click event to show the context menu
+text_area.bind("<Button-3>", show_context_menu)
+
+# Bind the left-click event to hide the context menu
+text_area.bind("<Button-1>", hide_context_menu)
 
 # Finalizing the window
 # root.update()
