@@ -99,12 +99,26 @@ def delete_last_char():
     text_area.event_generate("<<KP_Delete>>")
 
 
-def about_notepad():
-    mb.showinfo(
-        "About Deregtext",
-        "This is the first application from the DeregSoftware suite of apps.",
-    )
+def about_deregtext():
+    
+    aboutdereg = """
+    About Deregtext
+    
+    This is the first application from the DeregSoftware suite 
+    of apps. In reality, this is a coding project to learn 
+    Python. I have learned a bit as I've squashed bugs and 
+    implemented some features. Stay tuned.
+    """
+        
+    custom_dialog1 = Toplevel(root)
+    custom_dialog1.title("About Deregtext")
+    custom_dialog1.geometry("610x400")
 
+    label = Label(custom_dialog1, text=aboutdereg, justify=LEFT)
+    label.pack(padx=10, pady=10)
+
+    button = Button(custom_dialog1, text="OK", command=custom_dialog1.destroy)
+    button.pack(pady=10)
 
 def about_commands():
     commands = """
@@ -175,7 +189,7 @@ menu_bar.add_cascade(label="Edit", menu=edit_menu)
 # Adding the Help Menu and its components
 help_menu = Menu(menu_bar, tearoff=False, activebackground="DodgerBlue")
 
-help_menu.add_command(label="About Deregtext", command=about_notepad)
+help_menu.add_command(label="About Deregtext", command=about_deregtext)
 help_menu.add_command(label="About Commands", command=about_commands)
 
 menu_bar.add_cascade(label="Help", menu=help_menu)
@@ -200,6 +214,9 @@ text_area.bind("<Button-3>", show_context_menu)
 
 # Bind the left-click event to hide the context menu
 text_area.bind("<Button-1>", hide_context_menu)
+
+# Give the text area focus when the application starts
+text_area.focus_set()
 
 # Finalizing the window
 # root.update()
