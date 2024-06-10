@@ -1,0 +1,15 @@
+#!/usr/bin/env python3
+
+import libderegtxt
+
+
+# Package meta-data.
+NAME = 'Deregtext'
+DESCRIPTION = 'Text editor software'
+URL = 'https://github.com/askmarkio/deregtext'
+EMAIL = 'mark@askmark.io'
+AUTHOR = 'Mark'
+REQUIRES_PYTHON = '>=3.6.0'
+VERSION = '0.1.0'
+
+libderegtxt.main()
